@@ -18,7 +18,7 @@ class mainTest(TestCase):
     def test_good_movie(self):
         now = datetime.now() 
         video = Video.objects.create(
-          title ="Spongebob Ovalpants",
+          name ="Spongebob Ovalpants",
           price = 50000,
           description = "Perjalanan Spongebob Sepanjang Hidupnya",
           release_date = now,

@@ -94,7 +94,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-14. Membuat direktori baru bernama `templates` di dalam direktori aplikasi `main`. Di dalam direktori tersebut, buat berkas bernama `main.html`. Berkas tersebut berisi nama E-Commerce, nama, dan kelas. 
+15. Membuat direktori baru bernama `templates` di dalam direktori aplikasi `main`. Di dalam direktori tersebut, buat berkas bernama `main.html`. Berkas tersebut berisi nama E-Commerce, nama, dan kelas. 
 
 ```
 <h1>{{ app_name }}</h1>
@@ -105,7 +105,7 @@ python manage.py migrate
 <h5>Class: </h5>
 <p>{{ class }}</p>
 ```
-15. Untuk mengintegrasikan komponen MVT, buka berkas `views.py` yang terletak di dalam berkas aplikasi `main`. Tambahkan fungsi `show_main` yang akan mereturn fungsi render beserta argumennya. Fungsi ini untuk render tampilan HTML dengan menggunakan data yang diberikan. Berkas `views.py` akan berisi sebagai berikut.
+16. Untuk mengintegrasikan komponen MVT, buka berkas `views.py` yang terletak di dalam berkas aplikasi `main`. Tambahkan fungsi `show_main` yang akan mereturn fungsi render beserta argumennya. Fungsi ini untuk render tampilan HTML dengan menggunakan data yang diberikan. Berkas `views.py` akan berisi sebagai berikut.
 
 ```
 from django.shortcuts import render
@@ -120,7 +120,7 @@ def show_main(request):
     return render(request, "main.html", context)
 ```
 
-16. Mengonfigurasi <i>Routing</i> pada aplikasi `main` pada file `urls.py` di direktori `main`. 
+17. Mengonfigurasi <i>Routing</i> pada aplikasi `main` pada file `urls.py` di direktori `main`. 
 ```
 from django.urls import path
 from main.views import show_main
@@ -132,7 +132,7 @@ urlpatterns = [
 ]
 ``` 
 
-17. Mengonfigurasi <i>Routing</i> pada aplikasi `main` pada file `urls.py` di subdirektori `teleplay`.
+18. Mengonfigurasi <i>Routing</i> pada aplikasi `main` pada file `urls.py` di subdirektori `teleplay`.
 ```
 from django.contrib import admin
 from django.urls import path, include
@@ -143,13 +143,13 @@ urlpatterns = [
 ]
 ```
 
-18. Menguji aplikasi pada localhost dengan perintah. Kemudian,  membuka di `http://localhost:8000/` di peramban web. 
+19. Menguji aplikasi pada localhost dengan perintah. Kemudian,  membuka di `http://localhost:8000/` di peramban web. 
 ```
 python manage.py runserver
 ```
 
 
-19. Melakukan deployment ke PWS terhadap aplikasi dengan cara. Pertama, tekan `Create New Project`, isi `Project Name` dengan `teleplay`, dan tekan `Create New Project`. Akan muncul, <i>Project Credentials</i> dan <i>Project Commands</i> simpan kedua hal tersebut. Pada `settings.py` di subdirektori `teleplay`, tambahkan URL deployment PWS pada ALLOWED_HOSTS. 
+20. Melakukan deployment ke PWS terhadap aplikasi dengan cara. Pertama, tekan `Create New Project`, isi `Project Name` dengan `teleplay`, dan tekan `Create New Project`. Akan muncul, <i>Project Credentials</i> dan <i>Project Commands</i> simpan kedua hal tersebut. Pada `settings.py` di subdirektori `teleplay`, tambahkan URL deployment PWS pada ALLOWED_HOSTS. 
 ```
 ...
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "fransisca-ellya-teleplay.pbp.cs.ui.ac.id"]
@@ -159,10 +159,9 @@ Melakukan `git add`, `commit`, dan `push` di github.
 
 Tautan menuju aplikasi PWS yang sudah di-deploy : [http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/](http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/)
 
-20. Jalankan perintah yang terdapat pada PWS. Ketika melakukan pws, masukkan credential yang diterima. Lalu, jalankan perintah ini untuk kembali mengubah nama branch utama kamu menjadi master.
-`git branch -M master`
+21. Menjalankan perintah yang terdapat pada PWS, yaitu `git remote`, `branch`, dan `push`.
 
-21. Pada side bar situs PWS, klik proyek untuk melihat status deployemnt. Apabila `Running`, dapat mengakses URL deployment dengan menekan `View Project`. Lakukan,
+22. Pada side bar situs PWS, klik proyek untuk melihat status deployemnt. Apabila `Running`, dapat mengakses URL deployment dengan menekan `View Project`. Lakukan,
 ```
 git push pws master: master
 ```

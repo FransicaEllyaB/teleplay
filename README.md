@@ -12,10 +12,7 @@ git branch -M master
 ```
 
 3. Hubungkan dengan repositori Github. <br>
-Jalankan perintah dengan url yang didapatkan di github, 
-```
-git remote add origin <URL_REPO>
-```
+Menghubungkan direktori lokal dengan github dengan `git remote`
 
 4. Di direktori lokal, buat virtual environment Python baru dengan command :
 ```

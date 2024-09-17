@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 
 <h1 style="text-align: center; background-color: blanchedalmond; padding: 20px;">{{ app_name }}</h1>
@@ -10,25 +9,6 @@
 <h3>Class: </h3>
 <p>{{ class }}</p>
 
-<h3 style="background-color: lightslategrey; margin: 0; padding: 10px; text-align: left;"><b>NEWEST</b></h3>
-<div style="background-color: lightgrey; display: flex; justify-content: center;">
-  <figure>
-    <img src="{% static 'teleplay/images/Ada Kabar dengan Cinta.png' %}" style="border-radius: 8px; padding: 5px; width: 190px;" alt="Ada Kabar Dengan Cinta">
-    <figcaption>Ada Kabar dengan Cinta?</figcaption>
-  </figure>
-  <figure>
-    <img src="{% static 'teleplay/images/Dinda & Angga.png' %}" style="border-radius: 8px; padding: 5px; width: 190px;" alt="Ada Kabar Dengan Cinta">
-    <figcaption>Dinda & Angga</figcaption>
-  </figure>
-  <figure>
-    <img src="{% static 'teleplay/images/Merrie Riana.png' %}" style="border-radius: 8px; padding: 5px; width: 190px;" alt="Ada Kabar Dengan Cinta">
-    <figcaption>Merrie Riana</figcaption>
-  </figure>
-  <figure>
-    <img src="{% static 'teleplay/images/True Self.png' %}" style="border-radius: 8px; padding: 5px; width: 190px;" alt="Ada Kabar Dengan Cinta">
-    <figcaption>True Self</figcaption>
-  </figure>
-</div>
 <br>
 {% if not video_entries %}
 <p>Belum ada data video pada teleplay.</p>

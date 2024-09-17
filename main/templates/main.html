@@ -1,7 +1,43 @@
-<h1>{{ app_name }}</h1>
-<p>Sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum</p>
+{% extends 'base.html' %}
+{% block content %}
 
-<h5>Name: </h5>
-<p>{{ name }}</p>
-<h5>Class: </h5>
-<p>{{ class }}</p>
+<h1 style="text-align: center; background-color: blanchedalmond; padding: 20px;">{{ app_name }}</h1>
+<p style="text-align: center;">Sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum</p>
+
+<h3 style="text-align: center;">Name: </h3>
+<p style="text-align: center;">{{ name }}</p>
+<h3 style="text-align: center;">Class: </h3>
+<p style="text-align: center;">{{ class }}</p>
+
+{% if not video_entries %}
+<p>Belum ada data video pada teleplay.</p>
+{% else %}
+<table id="table-main">
+  <tr class="table-row">
+    <th class="data-table">Nama Video</th>
+    <th class="data-table">Price</th>
+    <th class="data-table">Description</th>
+    <th class="data-table">Duration</th>
+    <th class="data-table">Rating</th>
+  </tr>
+
+  {% comment %} Berikut cara memperlihatkan data mood di bawah baris ini 
+  {% endcomment %} 
+  {% for video_entry in video_entries %}
+  <tr class="table-row">
+    <td class="data-table">{{video_entry.name}}</td>
+    <td class="data-table">{{video_entry.price}}</td>
+    <td class="data-table">{{video_entry.description}}</td>
+    <td class="data-table">{{video_entry.duration}}</td>
+    <td class="data-table">{{video_entry.rating}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<br />
+
+<a href="{% url 'main:create_video_entry' %}">
+  <button style="text-align: right;">Add New Video Entry</button>
+</a>
+{% endblock content %}

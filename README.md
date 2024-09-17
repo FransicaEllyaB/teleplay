@@ -1,6 +1,7 @@
 # Teleplay
 
-Teleplay adalah sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum. Proyek Teleplay ini ditujukan untuk Tugas Mata Kuliah Pemrograman Berbasis Platform oleh Fransisca Ellya Bunaren dengan NPM 2306152286. Proyek ini dibuat dengan sistem operasi microsoft. Tautan menuju aplikasi PWS yang sudah di-deploy : [http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/](http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/)
+Teleplay adalah sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum. Proyek Teleplay ini ditujukan untuk Tugas Mata Kuliah Pemrograman Berbasis Platform oleh Fransisca Ellya Bunaren dengan NPM 2306152286. Proyek ini dibuat dengan sistem operasi microsoft. <br>
+Tautan menuju aplikasi PWS yang sudah di-deploy : [Link Repo PWS](http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/) <br>
 
 ## Tugas 2
 ### 1.Proses Pembuatan Proyek Django
@@ -207,3 +208,223 @@ Django ORM menyediakan lapisan keamanan yang mencegah serangan SQL injection den
 Menggunakan ORM dapat mempercepat proses pengembangan karena pengambang tidak perlu menuliskan kode SQL secara eksplisit. Selain itu, ORM memudahkan proses debugging dan perubahan skema.
 
 Dengan alasan-alasan tersebut, model Django disebut sebagai ORM karena menyediakan cara yang lebih mudah, aman, dan efisien untuk berinteraksi dengan database relasional menggunakan kode Python. 
+
+## Tugas 3
+### 1. Proses Pembuatan form input, views, dan routing url
+* <b>Membuat Form Input Data dan Menampilkan di Berkas HTML</b> <br>
+1. Membuat `forms.py` di main untuk membuat struktur form yang dapat menerima data Mood Entry baru.
+
+```
+from django.forms import ModelForm
+from django import forms
+from main.models import Video
+
+class VideoForm(ModelForm):
+    class Meta:
+        model = Video
+        fields = ["name", "price", "description", "duration", "rating"]
+        widgets = {
+            'name' : forms.TextInput(attrs={'placeholder' : "Enter video's name"}),
+            'duration' : forms.TimeInput(format='%H:%M:%S', attrs={'placeholder' : "HH:MM:SS"}),
+        }
+```
+2. Membuka berkas `views.py` yang ada di direktori `main` dan tambahkan fungsi `create_video_entry` yang menerima parameter `request`. Fungsi ini untuk  untuk menambahkan entri database. Selain itu, mengubah fungsi `show_main` yang sudah ada pada berkas views.py menjadi seperti berikut.
+```
+from django.http import HttpResponse
+from django.core import serializers
+from django.shortcuts import render, redirect
+from main.forms import VideoForm
+from main.models import Video
+
+def show_main(request):
+    video_entries = Video.objects.all()
+
+    context = {
+        'app_name' : 'Teleplay',
+        'name' : 'Fransisca Ellya Bunaren',
+        'class' : 'PBP F',
+        'video_entries': video_entries
+    }
+
+    return render(request, "main.html", context)
+
+def create_video_entry(request):
+    form = VideoForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_video_entry.html", context)
+
+```
+3. Untuk mengakses fungsi `show_main` dan `create_video_entry`, import dan tambahkan pada urlpatterns di `urls.py`.
+```
+from django.urls import path
+from main.views import show_main, create_video_entry, show_xml, show_json, show_xml_by_id, show_json_by_id
+
+app_name = 'main'
+
+urlpatterns = [
+    path('', show_main, name='show_main'),
+    path('create-video-entry', create_video_entry, name='create_video_entry'),
+    ...
+    ]
+```
+4. Buat berkas `main.html`, mengubah kodenya menjadi sebagai berikut. `main.html` untuk menampilkan data entri. 
+```{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1 style="text-align: center; background-color: blanchedalmond; padding: 20px;">{{ app_name }}</h1>
+<p style="text-align: center;">Sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum</p>
+
+<h3 style="text-align: center;">Name: </h3>
+<p style="text-align: center;">{{ name }}</p>
+<h3 style="text-align: center;">Class: </h3>
+<p style="text-align: center;">{{ class }}</p>
+
+{% if not video_entries %}
+<p>Belum ada data video pada teleplay.</p>
+{% else %}
+<table id="table-main">
+  <tr class="table-row">
+    <th class="data-table">Nama Video</th>
+    <th class="data-table">Price</th>
+    <th class="data-table">Description</th>
+    <th class="data-table">Duration</th>
+    <th class="data-table">Rating</th>
+  </tr>
+
+  {% comment %} Berikut cara memperlihatkan data mood di bawah baris ini 
+  {% endcomment %} 
+  {% for video_entry in video_entries %}
+  <tr class="table-row">
+    <td class="data-table">{{video_entry.name}}</td>
+    <td class="data-table">{{video_entry.price}}</td>
+    <td class="data-table">{{video_entry.description}}</td>
+    <td class="data-table">{{video_entry.duration}}</td>
+    <td class="data-table">{{video_entry.rating}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<br />
+
+<a href="{% url 'main:create_video_entry' %}">
+  <button style="text-align: right;">Add New Video Entry</button>
+</a>
+{% endblock content %}
+```
+5. Buat berkas `create_video_entry.html`, mengubah kodenya menjadi sebagai berikut. `main.html` untuk menampilkan data entri.
+```
+{% extends 'base.html' %} 
+{% block content %}
+<h1>Add New Video Entry</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  <table>
+    {{ form.as_table }}
+    <tr>
+      <td></td>
+      <td style="text-align: right;">
+        <input type="submit" value="Add Video Entry" />
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% endblock %}
+``` 
+* <b>Fungsi-Fungsi untuk Menambahkan Objek Model dengan Format XML, JSON, XML by ID, dan JSON by ID</b> <br>
+1. Buka `views.py`, import `HttpResponse` dan `Serializer`. Tambahkan fungsi `show_xml`, `show_json`, `show_xml_by_id`, dan `show_json_by_id`. 
+```
+from django.http import HttpResponse
+from django.core import serializers
+from django.shortcuts import render, redirect
+from main.forms import VideoForm
+from main.models import Video
+...
+def show_xml(request):
+    data = Video.objects.all()
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json(request):
+    data = Video.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_xml_by_id(request, id):
+    data = Video.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json_by_id(request, id):
+    data = Video.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+``` 
+* <b>Membuat routing URL untuk masing-masing views</b> <br>
+1.. Buka `urls.py`, import fungsi yang telah dibuat. Tambahkan <i>path url</i> ke dalam urlpatterns.
+```
+...
+path('xml/', show_xml, name='show_xml'),
+path('json/', show_json, name='show_json'),
+path('xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
+path('json/<str:id>/', show_json_by_id, name='show_json_by_id'),
+...
+```
+2. Jalankan proyek Django-mu dengan `perintah python manage.py runserver`.
+Untuk melihat hasil menggunakan `show_json` : [http://localhost:8000/json/](http://localhost:8000/json/)
+Untuk melihat hasil menggunakan `show_xml` : [http://localhost:8000/xml/](http://localhost:8000/json/)
+Untuk melihat hasil menggunakan `show_xml_by_id` : [http://localhost:8000/xml/[id]/](http://localhost:8000/xml/[id]/) dengan id yang didapatkan ketika mengakses endpoint /json/ atau /xml/.
+Untuk melihat hasil menggunakan `show_json_by_id` : [ http://localhost:8000/json/[id]/](http://localhost:8000/json/[id]/) dengan id yang didapatkan ketika mengakses endpoint /json/ atau /xml/.
+
+### 2. Jawaban dari Pertanyaan
+<b>Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?</b><br>
+
+Data delivery sangat penting karena merupakan proses pengiriman data dari satu titik ke titik lainnya secara efisiensi, kecepatan, dan keandalan yang optimal. Alasan utama data delivery dibutuhkan adalah :
+1. <b>Akses Data yang Cepat dan Real-Time</b> sehingga pengguna bisa mendapatkan informasi terbaru.
+2. <b>Skalabilitas</b> sehingga dapat mengelola permintaan data dari banyak pengguna secara bersamaan tanpa adanya penurunan performa.
+3. <b>User Experience (Pengalaman Pengguna)</b> karena pengalaman pengguna sangat dipengaruhi oleh seberapa cepat platform tersebut dapat menyajikan data.
+4. <b>Keamanan Data</b> <br>
+Data delivery yang baik dapat mengintegrasikan mekanisme enkripsi dan protokol keamanan yang kuat untuk melindungi data-data sensitif.
+5. <b>Penyebaran Konten yang Luas</b> <br>
+Platform yang memiliki jangkauan global/luas membutuhkan mekanisme data delivery yang dapat menjangkau pengguna di berbagai lokasi grafis.
+6. <b>Pengambilan Keputusan dan Analisis</b> <br>
+Platform sering mengandalkan data untuk analisi dan pengambilan keputusan.
+Jadi, data delivery digunakan untuk memastikan platform dapat berjalan dengan lancar, aman, dan responsif terhadap kebutuhan pengguna serta perkembangan data yang dinamis.
+
+ <b>Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?</b> <br>
+
+Menurut saya, JSON lebih baik daripada XML karena keringkasan dan sederhana. Selain itu, integrasi dengan javascript. JSON adalah bagian dari JavaScript sehingga mudah diproses oleh browser atau aplikasi yang menggunakan JavaScript. Lalu, JSON lebih ringan dan kurang kompleks sehingga proses parsing dan transfer data JSON lebih cepat dibandingkan XML. Kemudian, JSON mendukung tipe data yang lebih banyak, seperti array, objek, string, integer, boolean, dan null sehingga memudahkan representasi struktur data yang kompleks dibandingkan dengan XML tidak mendukung array atau tipe data primitif lainnya. Dalam pengembangan API berbasis REST, JSON menjadi standar de facto karena kesederhanaan dan kemampuan untuk memproses data yang cepat. Terakhir, JSON sangat fleksibilitas untuk pertukaran data yantar aplikasi modern.
+
+JSON lebih populer karena sederhana dan ringkas, cepat dan mudah diolah, mendukung REST API, dan memiliki ekosistem yang modern. Secara unum, JSON lebih baik dalam hal keringkasan, kinerja, dan integrasi dengan web yang modern. 
+
+<b>Jelaskan fungsi dari method `is_valid()` pada form Django dan mengapa kita membutuhkan method tersebut?</b> <br>
+
+Fungsi dari method `is_valid()` adalah memvalidasi data input, membersihkan data, dan mendeteksi error. 
+
+Fungsi ini dibutuhkan untuk keamanan dan validitas data,menjadga integritas data, dapat melakukan error handling yang mudah, dan membuat alur kerja yang standar dan konsisten. Tanpa validasi yang baik, data yang diterima dapat tidak sesuai atau berbahaya, yang bisa menyebabkan masalah di dalam aplikasi.
+
+<b>Mengapa kita membutuhkan `csrf_token` saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan `csrf_token` pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?</b> <br>
+
+CSRF token (Cross-Site Request Forgery token) adalah token yang berfungsi untuk mencegah serangan CSRF dan token ini digenerate oleh django. Seangan CSRF adalah jenis serangan di mana penyerang mencoba melakukan permintaan yang sah (seperti mengirim form) dari browser. Oleh karena itu, kita membutuhkan CSRF token untuk keamanan form django. 
+
+Jika kita tidak menambahkan CSRF token, situs akan rentan terhadap serangan CSRF. Penyerang dapat memanfaatkan sesi pengguna yang aktif di browser, seperti mengirim form tanpa sepengetahuan pengguna. Penyerang dapat membuat halaman berbahaya yang secara diam-diam mengirim POST ke aplikasi. Jika pengguna login ke aplikasi kemudian mengunjungi halaman penyerang, maka form dari halaman jahat tersebut dapat dikirim menggunakan kredensial atau sesi pengguna, seolah-olah pengguna yang melakukan tindakan itu sendiri. 
+
+Penyerang dapat memanfaatkan hal ini dengan:
+- Mengeksploitasii sesi aktif
+Ketika pengguna login ke situs kemudian mengunjungi situs lain berbahaya, situs berbahaya tersebut dapat mengirimkan permintaan ke server kita menggunakan sesi aktif pengguna tanpa sepengetahuan pengguna. 
+- Menjalankan aksi tanpa izin
+Penyerang dapat memanipulasi aplikasi untuk melakukan tindakan, seperti mengirimkan pesan, mengubah data profil, dan tindakan lainnya yang membutuhkan otorisasi pengguna.
+
+### 3. Screenshot dari hasil akses URL pada Postman
+* <b>Hasil akses json</b> <br>
+<img src="![Screenshot 2024-09-17 052236](https://github.com/user-attachments/assets/d2f42def-15a5-4f08-8236-3d75b70193b4)" alt="Hasil akses json"></img>
+* <b>Hasil akses xml</b> <br>
+<img src="![Screenshot 2024-09-17 052152](https://github.com/user-attachments/assets/2c141004-682e-4954-a244-b8bfe67f2072)" alt="Hasil akses xml"></img>
+* <b>Hasil akses json/[id]</b> <br>
+<img src="![Screenshot 2024-09-17 052308](https://github.com/user-attachments/assets/95f5f5aa-81e4-40d8-a4bc-d1d57afe59d5)" alt="Hasil akses json/[id]"></img>
+* <b>Hasil akses xml/[id]</b> <br>
+<img src="![Screenshot 2024-09-17 052326](https://github.com/user-attachments/assets/11e0dd69-e937-42ab-a2cd-984956ff5e9d)" alt="Hasil akses xml/[id]"></img>

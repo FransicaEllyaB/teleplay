@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-kcz#3(uv+jf6lom0%e$e0d6(h!7&%e4ae^aar1bwd+lqcr-5!r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "fransisca-ellya-teleplay.pbp.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/", "http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/"]
 
 
 # Application definition
@@ -55,7 +55,7 @@ ROOT_URLCONF = "teleplay.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

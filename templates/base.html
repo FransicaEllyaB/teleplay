@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      #table-main{
+        width: 75%; 
+        border: 1px solid black; 
+        border-collapse: collapse; 
+        padding: 10px;
+      }
+      .data-table{
+        border: 1px solid black; 
+        text-align: center; 
+        padding: 10px;
+      }
+      .table-row:nth-child(odd) {
+        background-color: lightgray;
+      }
+    </style>
+    {% block meta %} {% endblock meta %}
+  </head>
+
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+</html>

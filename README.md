@@ -165,7 +165,7 @@ git push pws master: master
 ```
 
 ### 2. Bagan Request Client ke Web Aplikasi Berbasis Django Beserta Responnya
-![](images/bagan.png)
+![bagan](https://github.com/user-attachments/assets/dc15b2ed-f80d-4c7e-8691-a9a10a687c39)
 Seorang user melakukan request yang akan diproses terlebih dahulu melalui urls.py. Kemudian, urls.py meneruskan ke view yang sesuai di views.py. Lalu, view akan membaca/menulis data di model dan menggunakan template untuk menentukan tampilan antarmuka pengguna. Setelah itu, views.py akan mengembalikan response ke user. 
 
 ### 3. Fungsi `git` dalam Pengembangan Perangkat Lunak

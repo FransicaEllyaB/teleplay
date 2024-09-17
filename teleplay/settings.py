@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-kcz#3(uv+jf6lom0%e$e0d6(h!7&%e4ae^aar1bwd+lqcr-5!r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/", "http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/"]
 
 
 # Application definition
@@ -122,3 +122,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost","http://127.0.0.1","https://pbp.cs.ui.ac.id/fransisca.ellya/teleplay", "https://pbp.cs.ui.ac.id/fransisca.ellya/teleplay"]

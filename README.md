@@ -421,10 +421,10 @@ Penyerang dapat memanipulasi aplikasi untuk melakukan tindakan, seperti mengirim
 
 ### 3. Screenshot dari hasil akses URL pada Postman
 * <b>Hasil akses json</b> <br>
-<img src="![Screenshot 2024-09-17 052236](https://github.com/user-attachments/assets/d33aafd3-ab26-4433-bc8c-0bede512b161)" alt="Hasil akses json"></img>
+![Screenshot 2024-09-17 052236](https://github.com/user-attachments/assets/b4ed4ae5-c676-4eb0-ab8c-fa3ae204a140)
 * <b>Hasil akses xml</b> <br>
-<img src="![Screenshot 2024-09-17 052152](https://github.com/user-attachments/assets/b1b331e4-eff2-4456-a748-505e3b1f7d90)" alt="Hasil akses xml"></img>
-* <b>Hasil akses json/[id]</b> <br>
-<img src="![Screenshot 2024-09-17 052308](https://github.com/user-attachments/assets/53382a93-2341-4a0f-9855-43c60c9f117c)" alt="Hasil akses json/[id]"></img>
+![Screenshot 2024-09-17 052152](https://github.com/user-attachments/assets/6d62a2f7-b391-487c-afc6-5bf3a3f60942)
+* <b>Hasil akses json/</b> <br>
+![Screenshot 2024-09-17 052308](https://github.com/user-attachments/assets/53f4bcb9-d915-42d0-9011-9910259819a4)
 * <b>Hasil akses xml/[id]</b> <br>
-<img src="![Screenshot 2024-09-17 052326](https://github.com/user-attachments/assets/6fcfe9d5-e0f1-489e-9dbe-3b8d21ca1d48)" alt="Hasil akses xml/[id]"></img>
+![Screenshot 2024-09-17 052326](https://github.com/user-attachments/assets/19287553-919d-4f75-b71c-d1fe991f8c42)

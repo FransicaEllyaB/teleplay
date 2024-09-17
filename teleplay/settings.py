@@ -123,4 +123,4 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost","http://127.0.0.1","https://pbp.cs.ui.ac.id/fransisca.ellya/teleplay", "https://pbp.cs.ui.ac.id/fransisca.ellya/teleplay"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost","http://127.0.0.1","https://fransisca.ellya:YSQvLt71H_WQMexxuBSHPii1uYc72cz@pbp.cs.ui.ac.id/fransisca.ellya/teleplay", "https://fransisca.ellya:YSQvLt71H_WQMexxuBSHPii1uYc72cz@pbp.cs.ui.ac.id/fransisca.ellya/teleplay"]

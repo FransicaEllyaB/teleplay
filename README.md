@@ -647,7 +647,7 @@ Pada fungsi show_main, menambahkan `last_login': request.COOKIES['last_login']` 
         * Pelacakan aktivitas pengguna untuk melacak aktivitas pengguna. 
         * Manajemen keranjang belanja memungkinkan unruk melacak barang-barang dalam keranjang belanja pengguna.
         * Analitik dan iklan untuk melacak perilaku pengguna dan menampilan iklan yang dipersonalisasi. <br>
-    Tidak semua cookies aman digunakan. Ada risiko penggunaan cookies, yaitu
+    <b>Tidak semua cookies aman digunakan. Ada risiko penggunaan cookies, yaitu </b>
         * Cookies bisa dibaca oleh pihak ketiga
         * Cookies bisa dicuru dalam transmisi (Man-in-the-Middle Attack) <br>
         Jika cookies dikirim dalam koneksi yang tidak aman, seorang penyerang dapat mencegatnya dalam perjalanan antara browser dan server.

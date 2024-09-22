@@ -1,7 +1,11 @@
 # Teleplay
 
 Teleplay adalah sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum. Proyek Teleplay ini ditujukan untuk Tugas Mata Kuliah Pemrograman Berbasis Platform oleh Fransisca Ellya Bunaren dengan NPM 2306152286. Proyek ini dibuat dengan sistem operasi microsoft. <br>
-Tautan menuju aplikasi PWS yang sudah di-deploy : [Link Repo PWS](http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/) <br>
+<b>Tautan menuju aplikasi PWS yang sudah di-deploy</b> : <br> [Link Repo PWS](http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/) <br><br>
+<b>Tugas</b> :
+- [Tugas 2](#tugas-2)
+- [Tugas 3](#tugas-3)
+- [Tugas 4](#tugas-4)
 
 ## Tugas 2
 ### 1.Proses Pembuatan Proyek Django
@@ -428,3 +432,222 @@ Penyerang dapat memanipulasi aplikasi untuk melakukan tindakan, seperti mengirim
 ![Screenshot 2024-09-17 052308](https://github.com/user-attachments/assets/53f4bcb9-d915-42d0-9011-9910259819a4)
 * <b>Hasil akses xml/[id]</b> <br>
 ![Screenshot 2024-09-17 052326](https://github.com/user-attachments/assets/19287553-919d-4f75-b71c-d1fe991f8c42)
+
+## Tugas 4
+### 1. Checklist
+1. * Untuk mengimplementasi fungsi registrasi, menambahkan fungsi `registrasi` di views.py dan library yang dibutuhkan `redirect` dari django.shortcuts, `UserCreationForm` dari django.contrib.auth.forms, dan `messages` dari django.contrib. Untuk fungsi login, tambahkan fungsi `login_user` dan library yang dibutuhkan adalah `login` dari django.contrib.auth dan `AuthenticationForm` dari django.contrib.auth.forms. Terakhir, untuk implementasi fungsi logout, tambahkan fungsi `logout` dan import `logout` dari django.contrib.auth. Pada fungsi, login_user ditambahkan decoratir agar user harus login terlebih dahulu sebelum mengakses halaman lain. 
+```
+@login_required(login_url='/login')
+def login_user(request):
+   if request.method == 'POST':
+    form = AuthenticationForm(data=request.POST)
+
+    if form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        response = HttpResponseRedirect(reverse("main:show_main"))
+        response.set_cookie('last_login', str(datetime.datetime.now()))
+        return response
+
+   else:
+      form = AuthenticationForm(request)
+   context = {'form': form}
+   return render(request, 'login.html', context)
+
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+
+Kemudian, menambahkan ke `urls.py` untuk routing. Pertama, import terlebih dahulu fungsi-fungsi tersebut dari `main.views`. 
+```
+path('register/', register, name='register'),
+path('login/', login_user, name='login'),
+path('logout/', logout_user, name='logout'),
+```
+
+Membuat halaman html untuk register.
+```
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 style="text-align: center; background-color: blanchedalmond; padding: 20px; margin-top: auto;">{{ app_name }}</h1>
+<p style="text-align: center;">Sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum</p>
+
+<h3>Name: </h3>
+<p>{{ name }}</p>
+<h3>Class: </h3>
+<p>{{ class }}</p>
+
+<br>
+{% if not video_entries %}
+<p>Belum ada data video pada teleplay.</p>
+{% else %}
+<table id="table-main">
+  <tr class="table-row-header">
+    <th class="data-table">Nama Video</th>
+    <th class="data-table">Price</th>
+    <th class="data-table">Description</th>
+    <th class="data-table">Duration</th>
+    <th class="data-table">Rating</th>
+  </tr>
+
+  {% comment %} Berikut cara memperlihatkan data video di bawah baris ini 
+  {% endcomment %} 
+  {% for video_entry in video_entries %}
+  <tr class="table-row">
+    <td class="data-table">{{video_entry.name}}</td>
+    <td class="data-table">{{video_entry.price}}</td>
+    <td class="data-table">{{video_entry.description}}</td>
+    <td class="data-table">{{video_entry.duration}}</td>
+    <td class="data-table">{{video_entry.rating}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<br />
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+
+<div>
+  <a href="{% url 'main:create_video_entry' %}">
+    <button>Add New Video Entry</button>
+  </a>
+  <br><br>
+  <a href="{% url 'main:logout' %}">
+    <button>Logout</button>
+  </a>
+</div>
+
+{% endblock content %}
+```
+Membuat halaman html untuk login.
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+  <h1>Login</h1>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input class="btn login_btn" type="submit" value="Login" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %} Don't have an account yet?
+  <a href="{% url 'main:register' %}">Register Now</a>
+</div>
+
+{% endblock content %}
+```
+* Menghubungkan model `Product` dengan `user`
+Untuk mengubungkan model `Product` dengan `user`, menambahkan ForeignKey untuk hubungan user dengan product dan mengimpor `User` dari `django.contrib.auth.models` di `models.py`. 
+```
+class Video(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+```
+Kemudian, di `views.py` yang ada di `main`, membuat kode sebagai berikut. 
+```
+def create_video_entry(request):
+    form = VideoForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        video_entry = form.save(commit=False)
+        video_entry.user = request.user
+        video_entry.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_video_entry.html", context)
+```
+
+Pada fungsi `show_main`, menambahkan `video_entries = Video.objects.filter(user=request.user)` dan pada context, `'name': request.user.username,` Lalu, lakukan makemigrations dan migrate.
+
+* Detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last login pada halaman utama aplikasi. <br>
+Di `views.py`, melakukan import datetime, HttpResponseRedirect dari django.http, dan import reverse dari django.urls . Untuk menambahkan fungsionalitas cookie, menambahkan last_login untuk melihat terakhir kali pengguna login.
+```
+if form.is_valid():
+    user = form.get_user()
+    login(request, user)
+    response = HttpResponseRedirect(reverse("main:show_main"))
+    response.set_cookie('last_login', str(datetime.datetime.now()))
+    return response
+```
+Pada fungsi show_main, menambahkan `last_login': request.COOKIES['last_login']` ke dalam variabel context.  Pada fungsi `logout_user` menambahkan `response.delete_cookie('last_login')` utnuk menghapus cookie last login dan `response = HttpResponseRedirect(reverse('main:login'))` untuk kembali ke halaman login. Untuk menampilkan sesi terakhir login di main.html, `<h5>Sesi terakhir login: {{ last_login }}</h5>`
+
+### 2. Jawaban dari Pertanyaan
+1. Perbedaan antara HttpResponseRedirect() dan redirect():
+* HTTPResponseRedirect() 
+HTTPResponseRedirect() untuk melakukan redirect secara eksplisit ke URL tertentu dan argumen yang dapat diterima hanya URL. 
+* redirect()
+Fungsi ini adalah lefih fleksibel dan dapat menerima argumen berupa model, view, atau url. 
+
+2. Cara kerja penghubungan model Product dengan User: 
+Untuk menghubungkan model `Product` dengan `User` di Django, menggunakan ForeignKey dengan fungsi untuk hubungan satu-ke-banyak. 
+```
+class Video(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+```
+Potongan kode ini untuk menghubungkan satu video dengan satu user melalui sebuah <i>relationship</i> di mana sebuah Video pasti memiliki satu user, sedangkan user dapat memiliki banyak video/product.
+
+3. Authentication adalah sebuah proses yang memverifikasi identitas, sedangkan authentication adalah proses penentuan hak akses atau izin pengguna. Saat pengguna login, langkah yang diambil adalah 
+<br> (i) Authentication: <br>
+Pengguna memasukkan nama pengguna dan kata sandi. Sistem memverifikasi kredensial terhadap data yang tersimpan dalam database. Jika kredensial benar, pengguna telah terautentikasi.
+<br> (ii) Authorization: <br>
+Setelah autentikasi, sistem memeriksa izin pengguna untuk menentukan halaman atau fitur yang dapat diakses. <br>
+<b>Implementasi di Django</b><br>
+1. Authentication<br>
+Menambahkan import AuthenticationForm dan login, kemudian menambahkan fungsi `login_user` di `views.py` untuk mengautentikasi pengguna.
+* Model user : Django menyediakan model User yang menyimpan informasi.
+* Form Authentication : Django memiliki form untuk menangangi login (AuthenticationForm) dan regiatrasi pengguna.
+* Middleware : Django menggunakan middleware untuk menangani sesi pengguna dan autentikasi. <br>
+2. Authorization<br>
+Setelah login, Django menangani otorisasi.
+* Pemissions: Django menyediakan sistem izin yang memungkinkan untuk menetapkan izin khusu pada model.
+* Groups: Pengelompokkan pengguna dan memberikan izin kepada group tersebut.
+* Decorators: Django menyediakan decorators seperti `@login_required` yang menyebabkan hanya dapat mengakses view tertentu bersasarkan autentikasi dan otorisasi pengguna. 
+
+4. Django mengingat pengguna yang login adalah holding state dengan menggunakan Cookies dan Session. Data cookie disimpan pada sisi klien, sedangkan data session biasanya disimpan pada sisi server. <br>
+Ketika pengguna login, Django membuat objek sesi pengguna dan menyimpan ID sesi di server. Untuk Cookie sesi, Django mengirimkan cookie sesi ke browser pengguna. Setiap kali pengguna membuat request baru, browser mengirimkan cookie sesi kembali ke server. Untuk validasi sesi, Django menggunakan ID sesi dalam cookie untuk mencari informasi sesi di server dan menghubungkannya dengan pengguna yang login. <br>
+Kegunaan lain dari cookies adalah:
+* Menyimpan preferensi pengguna untuk menyimpan pengaturan pengguna.
+* Pelacakan aktivitas pengguna untuk melacak aktivitas pengguna. 
+* Manajemen keranjang belanja memungkinkan unruk melacak barang-barang dalam keranjang belanja pengguna.
+* Analitik dan iklan untuk melacak perilaku pengguna dan menampilan iklan yang dipersonalisasi. <br>
+Tidak semua cookies aman digunakan. Ada risiko penggunaan cookies, yaitu
+* Cookies bisa dibaca oleh pihak ketiga
+* Cookies bisa dicuru dalam transmisi (Man-in-the-Middle Attack) <br>
+Jika cookies dikirim dalam koneksi yang tidak aman, seorang penyerang dapat mencegatnya dalam perjalanan antara browser dan server.
+* Cookies bisa dimanipulasi oleh pengguna oleh penyerang.
+* CSRF (Cross-Site Request Forgery) dapat memanfaatkan cookies sesi untuk mengeksekusi perintah tanpa izin pengguna.

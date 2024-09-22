@@ -37,8 +37,17 @@
 {% endif %}
 
 <br />
+<h5>Sesi terakhir login: {{ last_login }}</h5>
 
-<a href="{% url 'main:create_video_entry' %}">
-  <button style="font-weight: bolder; padding: 10px; margin: 20px; position: absolute; right: 50px;">Add New Video Entry</button>
-</a>
+
+<div>
+  <a href="{% url 'main:create_video_entry' %}">
+    <button>Add New Video Entry</button>
+  </a>
+  <br><br>
+  <a href="{% url 'main:logout' %}">
+    <button>Logout</button>
+  </a>
+</div>
+
 {% endblock content %}

@@ -608,46 +608,48 @@ Pada fungsi show_main, menambahkan `last_login': request.COOKIES['last_login']` 
 
 ### 2. Jawaban dari Pertanyaan
 1. Perbedaan antara HttpResponseRedirect() dan redirect():
-* HTTPResponseRedirect() 
-HTTPResponseRedirect() untuk melakukan redirect secara eksplisit ke URL tertentu dan argumen yang dapat diterima hanya URL. 
-* redirect()
-Fungsi ini adalah lefih fleksibel dan dapat menerima argumen berupa model, view, atau url. 
+    * HTTPResponseRedirect() 
+    HTTPResponseRedirect() untuk melakukan redirect secara eksplisit ke URL tertentu dan argumen yang dapat diterima hanya URL. 
+    * redirect()
+    Fungsi ini adalah lefih fleksibel dan dapat menerima argumen berupa model, view, atau url. 
 
 2. Cara kerja penghubungan model Product dengan User: 
-Untuk menghubungkan model `Product` dengan `User` di Django, menggunakan ForeignKey dengan fungsi untuk hubungan satu-ke-banyak. 
-```
-class Video(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-```
-Potongan kode ini untuk menghubungkan satu video dengan satu user melalui sebuah <i>relationship</i> di mana sebuah Video pasti memiliki satu user, sedangkan user dapat memiliki banyak video/product.
+    Untuk menghubungkan model `Product` dengan `User` di Django, menggunakan ForeignKey dengan fungsi untuk hubungan satu-ke-banyak. 
+    ```
+    class Video(models.Model):
+        user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ```
+    Potongan kode ini untuk menghubungkan satu video dengan satu user melalui sebuah <i>relationship</i> di mana sebuah Video pasti memiliki satu user, sedangkan user dapat memiliki banyak video/product.
 
 3. Authentication adalah sebuah proses yang memverifikasi identitas, sedangkan authentication adalah proses penentuan hak akses atau izin pengguna. Saat pengguna login, langkah yang diambil adalah 
-<br> (i) Authentication: <br>
-Pengguna memasukkan nama pengguna dan kata sandi. Sistem memverifikasi kredensial terhadap data yang tersimpan dalam database. Jika kredensial benar, pengguna telah terautentikasi.
-<br> (ii) Authorization: <br>
-Setelah autentikasi, sistem memeriksa izin pengguna untuk menentukan halaman atau fitur yang dapat diakses. <br>
-<b>Implementasi di Django</b><br>
-1. Authentication<br>
-Menambahkan import AuthenticationForm dan login, kemudian menambahkan fungsi `login_user` di `views.py` untuk mengautentikasi pengguna.
-* Model user : Django menyediakan model User yang menyimpan informasi.
-* Form Authentication : Django memiliki form untuk menangangi login (AuthenticationForm) dan regiatrasi pengguna.
-* Middleware : Django menggunakan middleware untuk menangani sesi pengguna dan autentikasi. <br>
-2. Authorization<br>
-Setelah login, Django menangani otorisasi.
-* Pemissions: Django menyediakan sistem izin yang memungkinkan untuk menetapkan izin khusu pada model.
-* Groups: Pengelompokkan pengguna dan memberikan izin kepada group tersebut.
-* Decorators: Django menyediakan decorators seperti `@login_required` yang menyebabkan hanya dapat mengakses view tertentu bersasarkan autentikasi dan otorisasi pengguna. 
-
-4. Django mengingat pengguna yang login adalah holding state dengan menggunakan Cookies dan Session. Data cookie disimpan pada sisi klien, sedangkan data session biasanya disimpan pada sisi server. <br>
-Ketika pengguna login, Django membuat objek sesi pengguna dan menyimpan ID sesi di server. Untuk Cookie sesi, Django mengirimkan cookie sesi ke browser pengguna. Setiap kali pengguna membuat request baru, browser mengirimkan cookie sesi kembali ke server. Untuk validasi sesi, Django menggunakan ID sesi dalam cookie untuk mencari informasi sesi di server dan menghubungkannya dengan pengguna yang login. <br>
-Kegunaan lain dari cookies adalah:
-* Menyimpan preferensi pengguna untuk menyimpan pengaturan pengguna.
-* Pelacakan aktivitas pengguna untuk melacak aktivitas pengguna. 
-* Manajemen keranjang belanja memungkinkan unruk melacak barang-barang dalam keranjang belanja pengguna.
-* Analitik dan iklan untuk melacak perilaku pengguna dan menampilan iklan yang dipersonalisasi. <br>
-Tidak semua cookies aman digunakan. Ada risiko penggunaan cookies, yaitu
-* Cookies bisa dibaca oleh pihak ketiga
-* Cookies bisa dicuru dalam transmisi (Man-in-the-Middle Attack) <br>
-Jika cookies dikirim dalam koneksi yang tidak aman, seorang penyerang dapat mencegatnya dalam perjalanan antara browser dan server.
-* Cookies bisa dimanipulasi oleh pengguna oleh penyerang.
-* CSRF (Cross-Site Request Forgery) dapat memanfaatkan cookies sesi untuk mengeksekusi perintah tanpa izin pengguna.
+    <br> (i) Authentication: <br>
+    Pengguna memasukkan nama pengguna dan kata sandi. Sistem memverifikasi kredensial terhadap data yang tersimpan dalam database. Jika kredensial benar, pengguna telah terautentikasi.
+    <br> (ii) Authorization: <br>
+    Setelah autentikasi, sistem memeriksa izin pengguna untuk menentukan halaman atau fitur yang dapat diakses. <br>
+    <b>Implementasi di Django</b><br>
+    1. Authentication<br>
+    Menambahkan import AuthenticationForm dan login, kemudian menambahkan fungsi `login_user` di `views.py` untuk mengautentikasi pengguna.
+        * Model user : Django menyediakan model User yang menyimpan informasi.
+        * Form Authentication : Django memiliki form untuk menangangi login (AuthenticationForm) dan regiatrasi pengguna.
+        * Middleware : Django menggunakan middleware untuk menangani sesi pengguna dan autentikasi. <br>
+    
+    2. Authorization<br>
+    Setelah login, Django menangani otorisasi.
+        * Pemissions: Django menyediakan sistem izin yang memungkinkan untuk menetapkan izin khusu pada model.
+        * Groups: Pengelompokkan pengguna dan memberikan izin kepada group tersebut.
+        * Decorators: Django menyediakan decorators seperti `@login_required` yang menyebabkan hanya dapat mengakses view tertentu bersasarkan autentikasi dan otorisasi pengguna. 
+    
+    4. Django mengingat pengguna yang login adalah holding state dengan menggunakan Cookies dan Session. Data cookie disimpan pada sisi klien, sedangkan data session biasanya disimpan pada sisi server. <br>
+    Ketika pengguna login, Django membuat objek sesi pengguna dan menyimpan ID sesi di server. Untuk Cookie sesi, Django mengirimkan cookie sesi ke browser pengguna. Setiap kali pengguna membuat request baru, 
+    browser mengirimkan cookie sesi kembali ke server. Untuk validasi sesi, Django menggunakan ID sesi dalam cookie untuk mencari informasi sesi di server dan menghubungkannya dengan pengguna yang login. <br>
+    Kegunaan lain dari cookies adalah:
+        * Menyimpan preferensi pengguna untuk menyimpan pengaturan pengguna.
+        * Pelacakan aktivitas pengguna untuk melacak aktivitas pengguna. 
+        * Manajemen keranjang belanja memungkinkan unruk melacak barang-barang dalam keranjang belanja pengguna.
+        * Analitik dan iklan untuk melacak perilaku pengguna dan menampilan iklan yang dipersonalisasi. <br>
+    <b>Tidak semua cookies aman digunakan. Ada risiko penggunaan cookies, yaitu </b>
+        * Cookies bisa dibaca oleh pihak ketiga
+        * Cookies bisa dicuru dalam transmisi (Man-in-the-Middle Attack) <br>
+        Jika cookies dikirim dalam koneksi yang tidak aman, seorang penyerang dapat mencegatnya dalam perjalanan antara browser dan server.
+        * Cookies bisa dimanipulasi oleh pengguna oleh penyerang.
+        * CSRF (Cross-Site Request Forgery) dapat memanfaatkan cookies sesi untuk mengeksekusi perintah tanpa izin pengguna.

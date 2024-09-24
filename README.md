@@ -604,7 +604,7 @@ if form.is_valid():
     response.set_cookie('last_login', str(datetime.datetime.now()))
     return response
 ```
-Pada fungsi show_main, menambahkan `last_login': request.COOKIES['last_login']` ke dalam variabel context.  Pada fungsi `logout_user` menambahkan `response.delete_cookie('last_login')` utnuk menghapus cookie last login dan `response = HttpResponseRedirect(reverse('main:login'))` untuk kembali ke halaman login. Untuk menampilkan sesi terakhir login di main.html, `<h5>Sesi terakhir login: {{ last_login }}</h5>`
+Pada fungsi show_main, menambahkan `last_login': request.COOKIES['last_login']` ke dalam variabel context.  Pada fungsi `logout_user` menambahkan `response.delete_cookie('last_login')` untuk menghapus cookie last login dan `response = HttpResponseRedirect(reverse('main:login'))` untuk kembali ke halaman login. Untuk menampilkan sesi terakhir login di main.html, `<h5>Sesi terakhir login: {{ last_login }}</h5>`
 
 ### 2. Jawaban dari Pertanyaan
 1. Perbedaan antara HttpResponseRedirect() dan redirect():

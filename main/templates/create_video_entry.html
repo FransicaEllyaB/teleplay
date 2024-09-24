@@ -1,6 +1,10 @@
 {% extends 'base.html' %} 
 {% block content %}
-<h1 style="text-shadow: 5px 5px 5px grey; ">Add New Video Entry</h1>
+<div style="display: flex; justify-content: space-between; background-color: blanchedalmond; align-items: center; padding: 20px; margin-top: auto;">
+  <h1 style="margin: auto;">{{ app_name }}</h1>
+  <a href="{% url 'main:show_main' %}">HOME</a>
+</div>
+<h1 style="text-shadow: 5px 5px 5px grey;">Add New Video Entry</h1>
 
 <form method="POST">
   {% csrf_token %}

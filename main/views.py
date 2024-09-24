@@ -35,7 +35,10 @@ def create_video_entry(request):
         video_entry.save()
         return redirect('main:show_main')
 
-    context = {'form': form}
+    context = {
+        'app_name' : 'Teleplay',
+        'form': form
+    }
     return render(request, "create_video_entry.html", context)
 
 def show_xml(request):

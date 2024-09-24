@@ -594,6 +594,14 @@ def create_video_entry(request):
 
 Pada fungsi `show_main`, menambahkan `video_entries = Video.objects.filter(user=request.user)` dan pada context, `'name': request.user.username,` Lalu, lakukan makemigrations dan migrate.
 
+* Membuat dua akun pengguna dengan masing-masing tiga dummy data menggunakan model 
+    - Dummy 1
+      ![Screenshot 2024-09-25 045457](https://github.com/user-attachments/assets/2b025124-5304-41cb-a449-6181dabed051)
+
+    - Dummy 2
+      ![Screenshot 2024-09-25 045517](https://github.com/user-attachments/assets/ad3284ff-e73c-4112-9994-578062fd4f32)
+
+
 * Detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last login pada halaman utama aplikasi. <br>
 Di `views.py`, melakukan import datetime, HttpResponseRedirect dari django.http, dan import reverse dari django.urls . Untuk menambahkan fungsionalitas cookie, menambahkan last_login untuk melihat terakhir kali pengguna login.
 ```

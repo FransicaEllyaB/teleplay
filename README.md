@@ -6,6 +6,8 @@ Teleplay adalah sebuah <b>E-Commerce</b> yang memberikan layanan entertainment a
 - [Tugas 2](#tugas-2)
 - [Tugas 3](#tugas-3)
 - [Tugas 4](#tugas-4)
+- [Tugas 5](#tugas-5)
+
 
 ## Tugas 2
 ### 1.Proses Pembuatan Proyek Django

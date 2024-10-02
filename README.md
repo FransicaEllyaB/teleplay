@@ -920,4 +920,3 @@ Grid Layout memungkinkan pengaturan elemen dalam dua dimensi (baris/kolom). Grid
 Perbedaan utama Flexbox dan Grid Layout adalah
 (i) Flexbox adalah lebih cocok untuk tata letak yang lebih sederhan atau ketika hanya membutuhkan pengaturan elemen dalam satu arah.
 (ii) Grid Layout lebih cocok untuk membuat tata letak web yang fleksibel dan responsif.
-

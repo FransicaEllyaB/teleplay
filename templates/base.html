@@ -1,36 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      #table-main{
-        margin: auto;
-        width: 75%; 
-        border: 1px solid black; 
-        border-collapse: collapse; 
-        padding: 10px;
-      }
-      .data-table{
-        position: relative;
-        border: 1px solid black; 
-        text-align: center; 
-        padding: 10px;
-      }
-      .table-row-header{
-        background-color: lightslategrey;
-      }
-      .table-row:nth-child(odd) {
-        background-color: lightgray;
-      }
-      .table-row:nth-child(even) {
-        background-color: white;
-      }
-      figure,h3,p{
-        text-align: center;
-      }
-    </style>
     {% block meta %} {% endblock meta %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
   </head>
 
   <body style="margin: 0px;">

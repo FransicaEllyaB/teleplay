@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.core import serializers
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from main.forms import VideoForm
 from main.models import Video
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm 
@@ -19,6 +19,7 @@ def show_main(request):
     context = {
         'app_name' : 'Teleplay',
         'name' : request.user.username,
+        'npm' : '2306152286',
         'class' : 'PBP F',
         'video_entries': video_entries,
         'last_login': request.COOKIES['last_login'],
@@ -27,8 +28,7 @@ def show_main(request):
     return render(request, "main.html", context)
 
 def create_video_entry(request):
-    form = VideoForm(request.POST or None)
-
+    form = VideoForm(request.POST or None, request.FILES or None)
     if form.is_valid() and request.method == "POST":
         video_entry = form.save(commit=False)
         video_entry.user = request.user
@@ -90,3 +90,20 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_video(request, id):
+    video = Video.objects.get(pk = id)
+
+    form = VideoForm(request.POST or None, request.FILES or None, instance=video)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_video.html", context)
+
+def delete_video(request, id):
+    mood = Video.objects.get(pk = id)
+    mood.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))

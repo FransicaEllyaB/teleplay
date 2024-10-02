@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block meta %}
+<title>Edit Video</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="flex flex-col min-h-screen bg-gray-100">
+  <div class="container mx-auto px-4 py-8 mt-16 max-w-xl">
+    <h1 class="text-3xl font-bold text-center mb-8 text-black">Edit Video Entry</h1>
+  
+    <div class="bg-white rounded-lg p-6 form-style">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="flex flex-col mb-4">
+                <label for="{{ field.id_for_label }}" class="mb-2 font-semibold">{{ field.label }}</label>
+
+                {% if field.field.widget.input_type == "file" %}
+                <div class="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full">
+                    {{ field }}
+                </div>
+                {% else %}
+                <div class="w-full">
+                    {{ field }}
+                </div>
+                {% endif %}
+
+                {% if field.help_text %}
+                <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="flex justify-center mt-6 space-x-4">
+                <button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out w-full">
+                    Edit Video Entry
+                </button>
+                <a href="{% url 'main:show_main' %}" class="btn btn-primary bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition duration-300 ease-in-out w-full text-center">Back to Home</a>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

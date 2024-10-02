@@ -1,0 +1,54 @@
+{% load static %}
+
+<div class="bg-white overflow-hidden shadow rounded-lg border">
+  <div class="px-4 py-5 sm:px-6">
+    <a
+      class="text-2xl font-bold text-center text-white inline-block"
+        href="#">
+            <img
+            src="{% static 'image/Profile.png' %}"
+            style="height: 40px"
+            alt="Logo Teleplay"
+            loading="lazy" />
+    </a>
+    <h3 class="text-lg leading-6 font-medium text-gray-900 inline-block">
+        User Profile
+    </h3>
+  </div>
+  <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+      <dl class="sm:divide-y sm:divide-gray-200">
+          <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 hover:bg-purple-300">
+              <dt class="text-sm font-medium text-gray-500">
+                  Nama :
+              </dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ name }}
+              </dd>
+          </div>
+          <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-indigo-300">
+              <dt class="text-sm font-medium text-gray-500">
+                  Kelas :
+              </dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ class }}
+              </dd>
+          </div>
+          <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100 hover:bg-purple-300">
+              <dt class="text-sm font-medium text-gray-500">
+                  NPM :
+              </dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ npm }}
+              </dd>
+          </div>
+          <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-indigo-300">
+              <dt class="text-sm font-medium text-gray-500">
+                  Last Login :
+              </dt>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                  {{ last_login }}
+              </dd>
+          </div>
+      </dl>
+  </div>
+</div>

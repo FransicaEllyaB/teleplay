@@ -661,3 +661,261 @@ Pada fungsi show_main, menambahkan `last_login': request.COOKIES['last_login']` 
         Jika cookies dikirim dalam koneksi yang tidak aman, seorang penyerang dapat mencegatnya dalam perjalanan antara browser dan server.
         * Cookies bisa dimanipulasi oleh pengguna oleh penyerang.
         * CSRF (Cross-Site Request Forgery) dapat memanfaatkan cookies sesi untuk mengeksekusi perintah tanpa izin pengguna.
+
+## Tugas 5
+### 1. Checklist
+* Untuk mengimplemantasikan fungsi menghapus dan mengedit product, dibuat fungsi `edit_fungsi` dan `delete_video` di views.py yang berisi sebagai berikut. Fungsi-fungsi ini kemudian akan dipanggil di `urls.py` kemudian dikirim ke `halaman yang membutuhkan fungsi ini`
+
+```
+def edit_video(request, id):
+    video = Video.objects.get(pk = id)
+
+    form = VideoForm(request.POST or None, request.FILES or None, instance=video)
+
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_video.html", context)
+
+def delete_video(request, id):
+    mood = Video.objects.get(pk = id)
+    mood.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+```
+
+* Kustomisasi halaman daftar product.
+- Jika tidak ada, form entry produk akan mengirimkan pesan dan gambar. Saya mengimplentasikannya dengan cara berikut.
+
+```
+{% if not video_entries %}
+    <div class="flex flex-col items-center justify-center min-h-[12rem] p-4">
+        <img src="{% static 'image/No Video.png' %}" alt="No Video" class="w-24 h-24 mb-2"/>
+        <p class="text-center text-gray-600 mt-4">Belum ada data video pada {{ app_name }}.</p>
+    </div>
+...
+```
+
+- Kemudian, jika sudah ada product akan menampilkan card product.
+```
+  {% else %}
+  <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+      {% for video_entry in video_entries %}
+          {% include 'card_video.html' with video_entry=video_entry %}
+      {% endfor %}
+  </div>
+  {% endif %}
+```
+Card yang saya buat dengan menggunakan Tailwind CSS CDN seperti ini. 
+```
+{% load static %}
+
+<div class="relative break-inside-avoid">
+    <div class="relative shadow-md rounded-2xl break-inside-avoid flex flex-col group hover:shadow-lg hover:border-transparent motion-safe:hover:scale-105">
+        <div class="block rounded-lg bg-white shadow-secondary-1 group">
+            {% if video_entry.video_thumbnail %}
+                <img src="{{ video_entry.video_thumbnail.url }}" alt="Thumbnail" class="rounded-t-lg"/>
+                <div class="opacity-0 group-hover:opacity-100 duration-300 absolute inset-x-0 justify-center items-end text-xl bg-gradient-to-t from-purple-300 to-indigo-300 text-black font-semibold">
+                    <h5 class="p-6 text-surface text-black">Deskripsi</p>
+                    <p class="text-gray-600 text-left break-words overflow-x scroll_bar">{{video_entry.description}}</p>
+                </div>
+                {% else %}
+                <div class="relative text-center overflow-hidden">
+                    <img src="{% static 'image/default.png' %}"  alt="default video thumbnail" class="rounded-t-lg"/>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <h2 class="text-4xl font-bold text-white break-words text-center bg-black bg-opacity-50 p-2 rounded">
+                            {{ video_entry.name }}
+                        </h2>
+                    </div>
+                </div>
+                <div class="opacity-0 group-hover:opacity-100 duration-300 absolute inset-x-0 justify-center items-end text-xl bg-gradient-to-t from-purple-300 to-indigo-300 text-black font-semibold">
+                    <h5 class="p-6 text-surface text-black">Deskripsi</p>
+                    <p class="text-gray-600 text-left break-words overflow-x scroll_bar">{{video_entry.description}}</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="p-6 text-surface text-black">
+            <div class="flex justify-between items-center mb-2"> 
+                <h5 class="font-bold text-xl break-words">{{ video_entry.name }}</h5>
+                <p class="text-gray-600 text-right">
+                    {{ video_entry.release_date }}
+                </p>
+            </div>
+            <p class="font-semibold text-lg mb-2">Price</p> 
+            <p class="text-gray-700 mb-2">
+                <span class="bg-[linear-gradient(to_bottom,transparent_0%,transparent_calc(100%_-_1px),#CDC1FF_calc(100%_-_1px))] bg-[length:100%_1.5rem] pb-1">{{video_entry.price}}</span>
+            </p>
+            <p class="font-semibold text-lg mb-2">Duration</p> 
+            <p class="text-gray-700 mb-2">
+                <span class="bg-[linear-gradient(to_bottom,transparent_0%,transparent_calc(100%_-_1px),#CDC1FF_calc(100%_-_1px))] bg-[length:100%_1.5rem] pb-1">{{video_entry.duration}}</span>
+            </p>
+        </div>
+    </div>
+    <div class="absolute top-0 -right-4 flex space-x-1">
+        <a href="{% url 'main:edit_video' video_entry.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
+        </a>
+        <a href="{% url 'main:delete_video' video_entry.pk %}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+        </a>
+    </div>
+</div>
+```
+
+* Dari fungsi edit dan hapus, dapat dilakukan pembuatan button. Berikut implementasinya.
+```
+  <a href="{% url 'main:edit_video' video_entry.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+      </svg>
+  </a>
+  <a href="{% url 'main:delete_video' video_entry.pk %}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+```
+
+* Implementasi yang saya lakukan agar navbar responsive sebagai berikut. Selain itu, saya menggunakan flex agar setiap elemen dapat responsive saya menggunakan flex.
+
+```
+{% load static %}
+
+<nav class="bg-gradient-to-t from-[#6a11cb] to-[#00008b] shadow-lg fixed top-0 left-0 z-40 w-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <a
+            class="text-4xl font-bold text-center text-white"
+            href="{% url 'main:show_main' %}">
+                <img
+                src="{% static 'image/Logo.png' %}"
+                style="height: 40px"
+                alt="Logo Teleplay"
+                loading="lazy" />
+          </a>
+        </div>
+        <div class="hidden md:flex items-center space-x-4">
+          {% if user.is_authenticated %}
+          <a
+          class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+          href="{% url 'main:show_main' %}">
+              {{ app_name }}
+          </a>
+            <a href="{% url 'main:create_video_entry' %}" 
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                Create Video
+            </a>
+            <span class="text-gray-300 mr-4">Welcome, {{ user.username }}</span>
+            <a href="{% url 'main:logout' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+              Logout
+            </a>
+          {% else %}
+            <a href="{% url 'main:login' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+              Login
+            </a>
+            <a href="{% url 'main:register' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+              Register
+            </a>
+          {% endif %}
+        </div>
+        <div class="md:hidden flex items-center">
+          <button class="mobile-menu-button">
+            <svg class="w-6 h-6 text-white" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div class="mobile-menu hidden md:hidden  px-4 w-full md:max-w-full">
+      <div class="pt-2 pb-3 space-y-1 mx-auto">
+        {% if user.is_authenticated %}
+          <span class="block text-gray-300 px-3 py-2">Welcome, {{ user.username }}</span>
+          <ul>
+            <li>
+              <a href="{% url 'main:show_main' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main:create_video_entry' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                Create Video
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'main:logout' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+                Logout
+              </a>
+            </li>
+          </ul>
+        {% else %}
+          <a href="{% url 'main:login' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+            Login
+          </a>
+          <a href="{% url 'main:register' %}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+            Register
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    <script>
+      const btn = document.querySelector("button.mobile-menu-button");
+      const menu = document.querySelector(".mobile-menu");
+    
+      btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+      });
+    </script>
+  </nav>
+```
+
+### 2. Jawab Pertanyaan
+
+1. CSS Selectors memiliki urutan untuk digunakan. Pertama,
+(i) Inline styles adalah style yang berada di dalam sebuah style tag.
+(ii) ID selectors adalah style yang dipakai berdasarkan ID yang dipilih.
+(iii) Classes selector adalah style yang dipakai berdasarkan class yang sudah didefinisikan dan dipilih.
+(iv) Element selector adalah jenis selector dalam CSS yang digunakan untuk memilih elemen HTML berdasarkan nama tag-nya. Contoh :
+```
+p{
+  font-size: 16px;
+}
+```
+
+2. Responsive design adalah membuat sebuah website yang baik untuk semua tampilan di segala device. Responsive design sangat penting karena untuk memastikan tampilan dan pengalaman pengguna optimal di berbagai perangkat. Alasan-alasan lainnya adalah sebagai berikut.
+(i) Pengalaman pengguna yang konsisten
+(ii) SEO Friendly: Google memprioritaskan situs responsif dalam pencarian.
+(iii) Efisiensi Pengembangan: Dengan responsive design, pengambang bisa fokus untuk membuat satu situs web yang dapat sesuai dengan beebagai perangkat.
+(iv) Efeksibilitas yang lebih baik: Responsivitas meningkatkan aksesbilitas bagi pengguna dengan berbagai kebutuhan.
+
+Contoh aplikasi yang sudah menerapkan responsive design adalah youtube.
+Baik di dekstop maupun perangkat mobile, Youtube dapat menyesuaikan tampilan elemen-elemen.
+
+Contoh aplikasi yang belum menerapkan responsive design adalah Brainly. Antar pengguna dapat memberikan jawaban yang bervariasi bisa menggunakan foto atau lain-lainnya sehingga ketika diakses di mobile phone. Terdapat jawaban yang tidak dapat dilihat karena kepotong dengan size di mobile phone. 
+
+3. Perbedaan antara margin, border, dan padding serta cara penggunaannya. 
+* Margin adalah bagian tepi di luar border eleemen. Margin digunakan untuk memberi jarak antara elemen HTML tanpa mempengaruhi ukutan elemen itu sendiri.
+* Border adalah garis yang membungkus elemen di antara padding dan margin. Border digunakan untuk menambahkan garis pembatas di sekitar elemen dengan berbagai gaya seperti solid, dashed, dotted, dll.
+* Padding adalah ruang kosong di dalam border elemen yang memberikan jarak antara konten elemen dengan border elemen tersebut. Kegunaannya adalah untuk membuat ruang di dalam elemen sehingga tidak bersentuhan langsung dengan border. 
+
+4. Flexbox dan Grid Layout adalah dua modul layout CSS yang digunakan untuk mengatur dan menyusun elemen-elemen dalam halaman web secara efisien. 
+(i) Flexbox / Flexible Box Layout 
+Untuk menyusun elemen-elemen dalam satu dimensi, konsep felexbok dalam flex container adalah elemen induk yang menggunakan `display; flex;` semua elemen di dalamnya akan menjadi flex items.
+(ii) Flex items 
+Elemen-elemen anak yang diatur tata letaknya oleh flexbox. 
+Properti dalam flexbox: `flex-direction` menentukan arah susunan elemen, `justify-content` menyusun flex items secara horizintal/vertikal, `align-items` menyusun flex items secara vertikal/horizintal, dan `flex-wrap` menentukan apakah elemen cukup untuk di-wrap dalam satu baris atau tidak. 
+
+Grid Layout memungkinkan pengaturan elemen dalam dua dimensi (baris/kolom). Grid sangat cocok untuk tata letak kompleks di mana elemen perlu ditempatkan pada posisi spesifik. 
+(i) Grid Container adalah elemen induk yang menggunakan `display: grid;`. Elemen di dalamnya adalah grid items.
+(ii) Grid Items adalah elemen-elemen yang diatur dalam grid. 
+
+Perbedaan utama Flexbox dan Grid Layout adalah
+(i) Flexbox adalah lebih cocok untuk tata letak yang lebih sederhan atau ketika hanya membutuhkan pengaturan elemen dalam satu arah.
+(ii) Grid Layout lebih cocok untuk membuat tata letak web yang fleksibel dan responsif.

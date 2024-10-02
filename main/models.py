@@ -10,6 +10,7 @@ class Video(models.Model):
     description = models.TextField()
     release_date = models.DateField(auto_now_add=True)
     duration = models.DurationField()
+    video_thumbnail = models.ImageField(null=True, blank=True, upload_to="image/")
 
     @property
     def is_movie_good(self):

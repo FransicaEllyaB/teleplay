@@ -1,6 +1,7 @@
 from django.urls import path
 from main.views import *
-from main.views import login_user
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'main'
 
@@ -14,4 +15,6 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
-]
+    path('edit-video/<uuid:id>', edit_video, name='edit_video'),
+    path('delete/<uuid:id>', delete_video, name='delete_video')
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

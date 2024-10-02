@@ -5,7 +5,7 @@ from main.models import Video
 class VideoForm(ModelForm):
     class Meta:
         model = Video
-        fields = ["name", "price", "description", "duration"]
+        fields = ["name", "price", "description", "duration", "video_thumbnail"]
         widgets = {
             'name' : forms.TextInput(attrs={'placeholder' : "Enter video's name"}),
             'duration' : forms.TimeInput(format='%H:%M:%S', attrs={'placeholder' : "HH:MM:SS"}),

@@ -20,12 +20,11 @@ urlpatterns = [
     path('edit-video/<uuid:id>', edit_video, name='edit_video'),
     path('delete/<uuid:id>', delete_video, name='delete_video'),
     path('create-video-entry-ajax', add_video_entry_ajax, name='add_video_entry_ajax'),
-    re_path(r'^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+]
 
-# if settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-# else:
-#     urlpatterns += [
-#         re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-#     ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]

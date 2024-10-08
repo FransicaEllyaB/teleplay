@@ -1018,6 +1018,12 @@ Perbedaan utama Flexbox dan Grid Layout adalah
       </div>
   ```
   - Hubungkan form dan path `/create-ajax/` yang mengarah ke fungsi view. 
+  ```
+  urlpatterns = [
+    ...
+    path('create-video-entry-ajax', add_video_entry_ajax, name='add_video_entry_ajax'),
+  ]
+  ```
   Button yang berguna untuk melakukan fungsi penyimpanan video.
   ```
   document.getElementById("submitVideoEntry").onclick = addVideoEntry;
@@ -1070,7 +1076,7 @@ Perbedaan utama Flexbox dan Grid Layout adalah
     Model pemrograman asinkron JavaScript memungkinkan tugas berjalan secara independen, mencegah satu tugas menghalangi tugas lainnya. Kemampuan ini meningkatkan responsivitas dan kinerja aplikasi, memastikan pengalaman pengguna yang lebih lancar. 
     * Ekosistem yang Berlimpah 
     JavaScript diuntungkan oleh ekosistem pustaka dan kerangka kerja yang luas. Alat-alat ini menyederhanakan pengembangan web dengan menawarkan komponen dan struktur yang telah dibuat sebelumnya. 
-    * Interaksi Dinamis dengan HTML dan CSS:
+    * Interaksi Dinamis dengan HTML dan CSS
     JavaScript memungkinkan pengembang untuk secara dinamis memanipulasi HTML dan CSS, memungkinkan perubahan langsung pada struktur halaman, gaya, dan elemen UI tanpa harus memuat ulang halaman.
     * Kompatibilitas dan Standardisasi 
     JavaScript adalah bagian dari standar web dan didukung oleh semua browser modern. Standar ECMAScript memastikan JavaScript terus berkembang dan tetap relevan dengan kebutuhan pengembangan modern.
@@ -1078,7 +1084,7 @@ Perbedaan utama Flexbox dan Grid Layout adalah
 2. Fungsi dari penggunaan `await` ketika menggunakan `fetch()` adalah mengembalikan <b>Promise</b> yang akan diselesaikan ketika response dari server tersedia. Dengan menambahkan `await` sebelum ``fetch()``, kita memberi tahu JavaScript untuk menunggu hingga Promise tersebut diselesaikan dan menghasilkan response. Selian itu, keuntungannya adalah menghindari Callback Hell. Dengan menggunakan `async`/`await`, kita bisa menulis kode asynchronous dengan gaya yang lebih mirip dengan kode synchronous, sehingga lebih mudah dibaca dan dipahami. <br><br>
 Jika tidak menggunakan `await`, fungsi `fetch()` tetap mengembalikan sebuah Promise, tetapi tidak menunggu untuk mendapatkan hasilnya. Untuk menanganinya, promise tersebut ditangani dengan .then() untuk mengambil hasilnya. Selain itu, hal yang dapat terjadi adalah eksekusi kode yang tidak terduga. Jika kita tidak menggunakan `await`, kode setelah `fetch()` akan langsung dieksekusi tanpa menunggi response. Hal ini akan mengakibatkan error karena mencoba menggunakan data yang belum tersedia. Selain itu, tanpa `await`, kita perlu menggunakan `.catch()` untuk menangani error. 
 
-3. Pada view, decorator `csrf_exempt` digunakan untuk AJAX POST karena untuk memberitahu Django tidak perlu mengecek keberadaan csrf_token pada POST request yang dikirimkan ke fungsi ini. Selain itu, dekorator ini ketika yakin bahwa endpoint tersebut tidak rentan terhadap serangan CSRF. Contohnya adalah ketika memiliki API yang hanya diakses oleh aplikasi yang Anda kontrol.
+3. Pada view, decorator `csrf_exempt` digunakan untuk AJAX POST karena untuk memberitahu Django tidak perlu mengecek keberadaan csrf_token pada POST request yang dikirimkan ke fungsi ini. Selain itu, dekorator ini ketika yakin bahwa endpoint tersebut tidak rentan terhadap serangan CSRF. Contohnya adalah ketika memiliki API yang hanya diakses oleh aplikasi.
 
 4. Pembersihan data input pengguna dilakukan di backend (server) meskipun telah dilakukan di frontend (klien) sengan alasan sebagai berikut.
     * Keamanan 

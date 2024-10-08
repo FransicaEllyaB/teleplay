@@ -1,12 +1,13 @@
 # Teleplay
 
-Teleplay adalah sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum. Proyek Teleplay ini ditujukan untuk Tugas Mata Kuliah Pemrograman Berbasis Platform oleh Fransisca Ellya Bunaren dengan NPM 2306152286. Proyek ini dibuat dengan sistem operasi microsoft. <br>
+Teleplay adalah sebuah <b>E-Commerce</b> yang memberikan layanan entertainment atau informasi berupa video untuk dinikmati khayalak umum. Proyek Teleplay ini ditujukan untuk Tugas Mata Kuliah Pemrograman Berbasis Platform oleh Fransisca Ellya Bunaren dengan NPM 2306152286.<br>
 <b>Tautan menuju aplikasi PWS yang sudah di-deploy</b> : <br> [Link Repo PWS](http://fransisca-ellya-teleplay.pbp.cs.ui.ac.id/) <br><br>
 <b>Tugas</b> :
 - [Tugas 2](#tugas-2)
 - [Tugas 3](#tugas-3)
 - [Tugas 4](#tugas-4)
 - [Tugas 5](#tugas-5)
+- [Tugas 8](#tugas-6)
 
 ## Tugas 2
 ### 1.Proses Pembuatan Proyek Django
@@ -920,3 +921,227 @@ Grid Layout memungkinkan pengaturan elemen dalam dua dimensi (baris/kolom). Grid
 Perbedaan utama Flexbox dan Grid Layout adalah
 (i) Flexbox adalah lebih cocok untuk tata letak yang lebih sederhan atau ketika hanya membutuhkan pengaturan elemen dalam satu arah.
 (ii) Grid Layout lebih cocok untuk membuat tata letak web yang fleksibel dan responsif.
+
+## Tugas 6
+### 1. Checklist
+* AJAX `GET`
+  - Ubahlah kode cards data mood agar dapat mendukung AJAX GET.
+    ```
+    async function getVideoEntries(){
+        return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+    }
+    ```
+  - Pengambilan data mood menggunakan AJAX GET demgan memastikan bahwa  data yang diambil hanyalah data milik pengguna yang logged-in.
+    ```
+    def show_json(request):
+      data = Video.objects.filter(user=request.user)
+      return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    ```
+
+* AJAX POST
+  - Sebuah tombol yang membuka sebuah modal dengan form untuk menambahkan Video.
+  ```
+      <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+        <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+        <button type="submit" id="submitVideoEntry" form="videoEntryForm" class="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+      </div>
+  ```
+  - Fungsi view baru untuk menambahkan video baru ke dalam basis data.
+  ```
+  @csrf_exempt
+  @require_POST
+  def add_video_entry_ajax(request):
+      try:
+          name = strip_tags(request.POST.get("name"))
+          price = request.POST.get("price")
+          description = strip_tags(request.POST.get("description"))
+
+          if not name or not price or not description:
+              return JsonResponse({"error": "All fields are required."}, status=400)
+          
+          try:
+              price = float(price)
+          except ValueError:
+              return JsonResponse({"error": "Invalid price format."}, status=400)
+          
+          try:
+              time_parts = list(map(int, request.POST.get("duration").split(':')))
+              hours = time_parts[0]
+              minutes = time_parts[1]
+              seconds = time_parts[2] if len(time_parts) == 3 else 0
+              duration = datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds)
+          except (ValueError, IndexError):
+              return JsonResponse({"error": "Invalid duration format."}, status=400)
+          
+          video_thumbnail = request.FILES.get("video_thumbnail")
+          user = request.user
+
+          new_video = Video(
+              name = name, price = price,
+              description = description, 
+              duration = duration,
+              video_thumbnail = video_thumbnail,
+              user=user
+          )
+          new_video.save()
+          return JsonResponse({"message": "Video created successfully."}, status=201)
+      
+      except Exception as e:
+          print(e)
+          return JsonResponse({"error": str(e)}, status=500)
+  ```
+  - form yang dibuat 
+  ```
+      <div id="error-message" style="display: none; color: red;"></div>
+        <form id="videoEntryForm" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700">Video</label>
+                <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter your Video" required>
+            </div>
+            <div class="mb-4">
+                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                <input type="number" id="price" name="price" min="0" step="500" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" required>
+            </div>
+            <div class="mb-4">
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Describe your video" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="duration" class="block text-sm font-medium text-gray-700">Duration</label>
+                <input type="text" id="duration" name="duration" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="00:00:00" required>
+            </div>
+            <div class="mb-4">
+                <label for="video_thumbnail" class="block text-sm font-medium text-gray-700">Video Thumbnail</label>
+                <input type="file" accept="image/*" name="video_thumbnail" id="image">
+            </div>
+        </form>
+      </div>
+  ```
+  - Hubungkan form dan path `/create-ajax/` yang mengarah ke fungsi view di urls.py
+  ```
+  urlpatterns = [
+    ...
+    path('create-video-entry-ajax', add_video_entry_ajax, name='add_video_entry_ajax'),
+  ]
+  ```
+  - Refresh pada halaman utama secara asinkronus untuk menampilkan daftar mood terbaru tanpa reload halaman utama secara keseluruhan.
+  ```
+  async function refreshVideoEntries() {
+        document.getElementById("video_entry_cards").innerHTML = "";
+        document.getElementById("video_entry_cards").className = "";
+        const videoEntries = await getVideoEntries();
+        let htmlString = "";
+        let classNameString = "";
+        let url = "";
+
+        if (videoEntries.length === 0) {
+            classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+            htmlString = `
+                <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                    <img src="{% static 'image/no-video.png' %}" alt="No Video" class="w-32 h-32 mb-4"/>
+                    <p class="text-center text-gray-600 mt-4">Belum ada data video pada teleplay.</p>
+                </div>
+            `;
+        }
+        else {
+            classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
+            videoEntries.forEach((item) => {
+                const baseUrl = "/media/"; 
+                const thumbnailUrl = item.fields.video_thumbnail ? `${baseUrl}${item.fields.video_thumbnail}` : "";
+
+                htmlString += `
+                <div class="relative break-inside-avoid p-5">
+                    <div class="relative shadow-md rounded-2xl break-inside-avoid flex flex-col group hover:shadow-lg hover:border-transparent motion-safe:hover:scale-105">
+                        <div class="block rounded-lg bg-white shadow-secondary-1 group">
+                            ${thumbnailUrl ? `
+                                <img src="${thumbnailUrl}" alt="Thumbnail" class="rounded-t-lg "/>
+                            ` : `
+                                <div class="relative text-center overflow-hidden">
+                                    <img src="{% static 'image/default.png' %}" alt="Default video thumbnail" class="rounded-t-lg"/>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <h2 class="text-4xl font-bold text-white break-words text-center bg-black bg-opacity-50 p-2 rounded">
+                                            ${item.fields.name}
+                                        </h2>
+                                    </div>
+                                </div>
+                            `}
+                        <div class="opacity-0 group-hover:opacity-100 duration-300 absolute inset-x-0 justify-center items-end text-xl bg-gradient-to-t from-purple-300 to-indigo-300 text-black font-semibold">
+                            <h5 class="p-4 text-surface text-black">Deskripsi</h5>
+                            <p class="px-5 text-base text-gray-600 break-words overflow-x scroll_bar">${item.fields.description}</p>
+                        </div>
+                        </div>
+                        <div class="p-4 text-surface text-black">
+                            <div class="flex justify-between items-center mb-2"> 
+                                <h5 class="font-bold text-xl break-words">${item.fields.name}</h5>
+                                <p class="text-gray-600 text-right">
+                                    ${item.fields.release_date}
+                                </p>
+                            </div>
+                            <p class="font-semibold text-lg mb-2">Price</p> 
+                            <p class="text-gray-700 mb-2">
+                                <span class="bg-[linear-gradient(to_bottom,transparent_0%,transparent_calc(100%_-_1px),#CDC1FF_calc(100%_-_1px))] bg-[length:100%_1.5rem] pb-1">${item.fields.price}</span>
+                            </p>
+                            <p class="font-semibold text-lg mb-2">Duration</p> 
+                            <p class="text-gray-700 mb-2">
+                                <span class="bg-[linear-gradient(to_bottom,transparent_0%,transparent_calc(100%_-_1px),#CDC1FF_calc(100%_-_1px))] bg-[length:100%_1.5rem] pb-1">${item.fields.duration}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="absolute top-0 -right-4 flex space-x-1">
+                        <a href="/edit-video/${item.pk}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </a>
+                        <a href="/delete/${item.pk}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                `;
+            });
+        }
+        document.getElementById("video_entry_cards").className = classNameString;
+        document.getElementById("video_entry_cards").innerHTML = htmlString;
+    }
+  ```
+
+### 2. Jawab Pertanyaan
+1. Manfaat penggunaan JavaScript dalam penggunaan aplikasi web
+    * Peningkatan kecepatan dan efisiensi 
+    JavaScript adalah bahasa yang dieksekusi di browser pengguna, yang memungkinkan pengembang membuat halaman web yang interaktif dan dinamis tanpa memerlukan interaksi dengan server untuk setiap perubahan kecil. Kecepatan JavaScript yang dijalankan di sisi klien sehingga meminimalkan ketergantungan pada sumber daya server.
+    * Proses Pengembangan yang Disederhanakan
+    Kesederhanaan JavScript memperlancar pengembangan situs web dengan memungkinkan tugas front-end dan back-end dieksekusi dalam satu bahasa. Dengan JavaScript, pengembang dapat fokus membangun fungsionalitas tanpa beban tambahan dalam mengelola berbagai bahasa, meningkatkan efisiensi, dan mendorong proses pengembangan yang lebih mudah.
+    * Pengurangan Beban Server
+    JavaScript mengurangi beban server dengan mengizinkan tugas tertentu, seperti validasi formulir dan rendering konten dinamis, untuk ditangani oleh browser pengguna dan bukan oleh server. 
+    * Fleksibilitas dalam Aplikasi
+    JavaScript memungkinkan pengembang untuk membuat antarmuka yang menarik secara visual dan interaktif. Baik itu mengubah gambar atau menambahkan fitur lanjutan, JavaScript bersifat dominan dan fleksibel.
+    * Model Pemrograman Asinkron
+    Model pemrograman asinkron JavaScript memungkinkan tugas berjalan secara independen, mencegah satu tugas menghalangi tugas lainnya. Kemampuan ini meningkatkan responsivitas dan kinerja aplikasi, memastikan pengalaman pengguna yang lebih lancar. 
+    * Ekosistem yang Berlimpah 
+    JavaScript diuntungkan oleh ekosistem pustaka dan kerangka kerja yang luas. Alat-alat ini menyederhanakan pengembangan web dengan menawarkan komponen dan struktur yang telah dibuat sebelumnya. 
+    * Interaksi Dinamis dengan HTML dan CSS:
+    JavaScript memungkinkan pengembang untuk secara dinamis memanipulasi HTML dan CSS, memungkinkan perubahan langsung pada struktur halaman, gaya, dan elemen UI tanpa harus memuat ulang halaman.
+    * Kompatibilitas dan Standardisasi 
+    JavaScript adalah bagian dari standar web dan didukung oleh semua browser modern. Standar ECMAScript memastikan JavaScript terus berkembang dan tetap relevan dengan kebutuhan pengembangan modern.
+
+2. Fungsi dari penggunaan `await` ketika menggunakan `fetch()` adalah mengembalikan <b>Promise</b> yang akan diselesaikan ketika response dari server tersedia. Dengan menambahkan `await` sebelum ``fetch()``, kita memberi tahu JavaScript untuk menunggu hingga Promise tersebut diselesaikan dan menghasilkan response. Selian itu, keuntungannya adalah menghindari Callback Hell. Dengan menggunakan `async`/`await`, kita bisa menulis kode asynchronous dengan gaya yang lebih mirip dengan kode synchronous, sehingga lebih mudah dibaca dan dipahami. <br><br>
+Jika tidak menggunakan `await`, fungsi `fetch()` tetap mengembalikan sebuah Promise, tetapi tidak menunggu untuk mendapatkan hasilnya. Untuk menanganinya, promise tersebut ditangani dengan .then() untuk mengambil hasilnya. Selain itu, hal yang dapat terjadi adalah eksekusi kode yang tidak terduga. Jika kita tidak menggunakan `await`, kode setelah `fetch()` akan langsung dieksekusi tanpa menunggi response. Hal ini akan mengakibatkan error karena mencoba menggunakan data yang belum tersedia. Selain itu, tanpa `await`, kita perlu menggunakan `.catch()` untuk menangani error. 
+
+3. Pada view, decorator `csrf_exempt` digunakan untuk AJAX POST karena untuk memberitahu Django tidak perlu mengecek keberadaan csrf_token pada POST request yang dikirimkan ke fungsi ini. Selain itu, dekorator ini ketika yakin bahwa endpoint tersebut tidak rentan terhadap serangan CSRF. Contohnya adalah ketika memiliki API yang hanya diakses oleh aplikasi yang Anda kontrol.
+
+4. Pembersihan data input pengguna dilakukan di backend (server) meskipun telah dilakukan di frontend (klien) sengan alasan sebagai berikut.
+    * Keamanan 
+      - Menghindari manipulasi: pengguna dapat dapat memodifikasi kode JavaScript di frontend jika ika hanya bergantung pembersihan data di frontend. 
+      - Melindungi basis data: data yang tidak dibersihkan bisa menyebabkan kerusakan pada basis data.
+    * Validasi Ganda
+      - Tingkat Validasi yang Berbeda: dengan melakukan validasi dan pembersihan di backend, memastikan bahwa data yang diterima dari klien memenuhi standar tertentu, terlepas dari validasi yang mungkin sudah diterapkan di frontend.
+      - Menangani Permintaan Langsung: Pengguna dapat mengirim permintaan langsung ke server menggunakan alat. Jika hanya mengandalkan pembersihan di frontend, data yang berbahaya masih dapat dikirim ke server. 
+    * Pengalaman Konsisten
+      - Menjaga konsistensi : dengan melakukan pembersihan di backend, Anda memastikan bahwa semua permintaan, baik yang datang dari aplikasi frontend maupun dari sumber lain, diproses dengan cara yang sama. 
+    * Mematuhi Prinsip Defense in Depth
+      - Lapisan Keamanan: Prinsip "Defense in Depth" menyarankan bahwa Anda harus memiliki beberapa lapisan keamanan. 
+      
+    Jadi, jika pembersihan data hanya dilakukan di front-end, masih bisa terjadi celah keamanan (Cross Site Scripting atau XSS) dan integritas data yang belum tentu bersih, valid, dan aman sehingga diperlukan pembersihan data juga di backend.

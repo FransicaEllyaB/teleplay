@@ -16,5 +16,6 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
     path('edit-video/<uuid:id>', edit_video, name='edit_video'),
-    path('delete/<uuid:id>', delete_video, name='delete_video')
+    path('delete/<uuid:id>', delete_video, name='delete_video'),
+    path('create-video-entry-ajax', add_video_entry_ajax, name='add_video_entry_ajax'),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

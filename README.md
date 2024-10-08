@@ -1022,7 +1022,7 @@ Perbedaan utama Flexbox dan Grid Layout adalah
   ```
   document.getElementById("submitVideoEntry").onclick = addVideoEntry;
   ```
-  - Refresh pada halaman utama secara asinkronus untuk menampilkan daftar mood terbaru tanpa reload halaman utama secara keseluruhan.
+  - Function addVideoEntry()
   ```
   function addVideoEntry() {
         fetch("{% url 'main:add_video_entry_ajax' %}", {

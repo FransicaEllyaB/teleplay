@@ -10,7 +10,7 @@ class Video(models.Model):
     description = models.TextField(blank=False, null=False)
     release_date = models.DateField(auto_now_add=True)
     duration = models.DurationField()
-    video_thumbnail = models.ImageField(null=True, blank=True, upload_to="image/")
+    video_thumbnail = models.URLField(max_length=1024, null=True, blank=True)  # Menyimpan URL gambar
 
     @property
     def is_movie_good(self):

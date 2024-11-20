@@ -57,7 +57,7 @@
             </div>
             <div class="mb-4">
                 <label for="video_thumbnail" class="block text-sm font-medium text-gray-700">Video Thumbnail</label>
-                <input type="file" accept="image/*" name="video_thumbnail" id="image">
+                <input type="url" name="video_thumbnail" id="image" placeholder="https://example.com/image.jpg">
             </div>
         </form>
       </div>
@@ -78,7 +78,6 @@
         .then(response => {
             document.getElementById("videoEntryForm").reset(); // Untuk membersihkan kembali input form
             if (!response.ok) {
-                // Jika respon tidak OK, throw an error
                 return response.json().then(data => {
                     throw new Error(data.error || "An unknown error occurred");
                 });
@@ -112,7 +111,6 @@
         const videoEntries = await getVideoEntries();
         let htmlString = "";
         let classNameString = "";
-        let url = "";
 
         if (videoEntries.length === 0) {
             classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
@@ -126,8 +124,7 @@
         else {
             classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
             videoEntries.forEach((item) => {
-                const baseUrl = "/media/"; 
-                const thumbnailUrl = item.fields.video_thumbnail ? `${baseUrl}${item.fields.video_thumbnail}` : "";
+                const thumbnailUrl = item.fields.video_thumbnail;
 
                 htmlString += `
                 <div class="relative break-inside-avoid p-5 group">

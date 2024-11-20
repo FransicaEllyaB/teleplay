@@ -20,6 +20,7 @@ urlpatterns = [
     path('edit-video/<uuid:id>', edit_video, name='edit_video'),
     path('delete/<uuid:id>', delete_video, name='delete_video'),
     path('create-video-entry-ajax', add_video_entry_ajax, name='add_video_entry_ajax'),
+    path('create-flutter/', create_video_flutter, name='create_video_flutter'),
 ]
 
 if settings.DEBUG:

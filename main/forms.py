@@ -20,3 +20,9 @@ class VideoForm(ModelForm):
     def clean_description(self):
         description = self.cleaned_data["description"]
         return strip_tags(description)
+    
+    @property
+    def valid_thumbnail(self):
+        if not self.video_thumbnail or not self.video_thumbnail.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+            return ""
+        return self.video_thumbnail

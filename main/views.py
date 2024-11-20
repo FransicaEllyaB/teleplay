@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -27,7 +29,7 @@ def show_main(request):
     return render(request, "main.html", context)
 
 def create_video_entry(request):
-    form = VideoForm(request.POST or None, request.FILES or None)
+    form = VideoForm(request.POST or None)
     if form.is_valid() and request.method == "POST":
         video_entry = form.save(commit=False)
         video_entry.user = request.user
@@ -95,7 +97,7 @@ def logout_user(request):
 def edit_video(request, id):
     video = Video.objects.get(pk = id)
 
-    form = VideoForm(request.POST or None, request.FILES or None, instance=video)
+    form = VideoForm(request.POST or None, instance=video)
 
     if form.is_valid() and request.method == "POST":
         form.save()
@@ -116,6 +118,7 @@ def add_video_entry_ajax(request):
         name = strip_tags(request.POST.get("name"))
         price = request.POST.get("price")
         description = strip_tags(request.POST.get("description"))
+        video_thumbnail = request.POST.get("video_thumbnail")
 
         if not name or not price or not description:
             return JsonResponse({"error": "All fields are required."}, status=400)
@@ -134,7 +137,9 @@ def add_video_entry_ajax(request):
         except (ValueError, IndexError):
             return JsonResponse({"error": "Invalid duration format."}, status=400)
         
-        video_thumbnail = request.FILES.get("video_thumbnail")
+        if not video_thumbnail.endswith(('.jpg', '.jpeg', '.png')):
+            return JsonResponse({"error": "Thumbnail must be a valid image URL (.jpg, .jpeg, .png)."}, status=400)
+        
         user = request.user
 
         new_video = Video(
@@ -149,3 +154,33 @@ def add_video_entry_ajax(request):
     
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+@csrf_exempt
+def create_video_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        hours = int(request.POST.get('hours', 0))
+        minutes = int(request.POST.get('minutes', 0))
+        seconds = int(request.POST.get('seconds', 0))
+        video_thumbnail = data.get('imageUrl')
+
+        total_seconds = hours * 3600 + minutes * 60 + seconds
+        duration = datetime.timedelta(seconds=total_seconds)
+
+        if not video_thumbnail.endswith(('.jpg', '.jpeg', '.png')):
+            return JsonResponse({"error": "Thumbnail must be a valid image URL (.jpg, .jpeg, .png)."}, status=400)
+
+        new_video = Video.objects.create(
+            user=request.user,
+            name=data["name"],
+            price=int(data["price"]),
+            description=data["description"],
+            duration=duration,
+            video_thumbnail=data["imageUrl"],
+        )
+
+        new_video.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
